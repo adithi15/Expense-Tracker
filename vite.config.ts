@@ -11,5 +11,10 @@ export default defineConfig(() => {
         '@': path.resolve(__dirname, '.'),
       },
     },
+    server: {
+      proxy: {
+        '/api': 'http://localhost:3000',
+      },
+    },
   };
 });
