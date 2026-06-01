@@ -23,6 +23,22 @@ const getDateDaysAgo = (days) => {
   return date.toISOString().split('T')[0];
 };
 
+// ── NEW: Employee seed data ──────────────────────────────────────────────────
+const SAMPLE_EMPLOYEES_SEED = [
+  { name: "Adithi Ankam",   email: "adithi.ankam@company.com",  role: "Admin",     department: "Sales & BD" },
+  { name: "Vemula Ravi",    email: "vemula@company.com",         role: "Employee",  department: "Product Engineering" },
+  { name: "Anjali Mehta",   email: "anjali.mehta@company.com",   role: "Employee",  department: "Customer Success" },
+  { name: "Shivam Kapoor",  email: "shivam.kapoor@company.com",  role: "Employee",  department: "HR & Finance Admin" },
+  { name: "Adithi Sharma",  email: "adithi@company.com",         role: "Employee",  department: "HR & Finance Admin" },
+  { name: "Rohit Desai",    email: "rohit.desai@company.com",    role: "Employee",  department: "Product Engineering" },
+  { name: "Priya Nair",     email: "priya.nair@company.com",     role: "Employee",  department: "Customer Success" },
+  { name: "Karan Mehta",    email: "karan.mehta@company.com",    role: "Employee",  department: "Sales & BD" },
+  { name: "Sneha Joshi",    email: "sneha.joshi@company.com",    role: "Employee",  department: "Marketing" },
+  { name: "Arjun Rao",      email: "arjun.rao@company.com",      role: "Employee",  department: "Finance" },
+  { name: "Divya Menon",    email: "divya.menon@company.com",    role: "Employee",  department: "Operations" },
+  { name: "Nikhil Verma",   email: "nikhil.verma@company.com",   role: "Employee",  department: "Product Engineering" },
+];
+
 const SAMPLE_EXPENSES_SEED = [
   {
     id: 'exp-101',
@@ -212,11 +228,169 @@ const SAMPLE_EXPENSES_SEED = [
       flaggedIssues: ['"farewell" event keyword violates single claim rules', 'Amount exceeds food cap (₹1,500/head)'],
       policyNotes: 'Policy alert: Team farewell gatherings, celebrations, or recreational events are classified as social costs. Do not file under travel or personal dining claims.'
     }
+  },
+  // ── NEW EXPENSES for new employees ────────────────────────────────────────
+  {
+    id: 'exp-109',
+    employeeName: 'Rohit Desai',
+    employeeEmail: 'rohit.desai@company.com',
+    expenseType: 'Local Travel (Auto/Cab)',
+    date: getDateDaysAgo(3),
+    amount: 620,
+    description: 'Cab to client office in Andheri for product demo and sprint review meeting',
+    paymentMode: 'UPI',
+    receiptName: 'ola_invoice_3821.pdf',
+    receiptUrl: 'placeholder_uber',
+    status: 'Pending',
+    isTravelTrip: false,
+    aiAudit: {
+      riskLevel: 'LOW', riskScore: 5, confidenceScore: 96,
+      flaggedIssues: ['Client site visit verified'],
+      policyNotes: 'Passed Audit: Local cab for client meeting. Within standard local travel limits.'
+    }
+  },
+  {
+    id: 'exp-110',
+    employeeName: 'Priya Nair',
+    employeeEmail: 'priya.nair@company.com',
+    expenseType: 'Food',
+    date: getDateDaysAgo(4),
+    amount: 980,
+    description: 'Working lunch with customer success team for quarterly review preparation',
+    paymentMode: 'Card',
+    receiptName: 'cafe_coffee_day_slip.png',
+    receiptUrl: 'placeholder_bill',
+    status: 'Approved',
+    adminNotes: 'Team lunch approved under CS department budget.',
+    isTravelTrip: false,
+    aiAudit: {
+      riskLevel: 'LOW', riskScore: 8, confidenceScore: 95,
+      flaggedIssues: ['Team meal within per-head cap'],
+      policyNotes: 'Passed Audit: Departmental working lunch. Amount within policy limits.'
+    }
+  },
+  {
+    id: 'exp-111',
+    employeeName: 'Karan Mehta',
+    employeeEmail: 'karan.mehta@company.com',
+    expenseType: 'Train/Flight',
+    date: getDateDaysAgo(6),
+    amount: 8200,
+    description: 'Train ticket to Hyderabad for SalesForce annual partner conference',
+    paymentMode: 'Card',
+    receiptName: 'irctc_ticket_karan.pdf',
+    receiptUrl: 'placeholder_invoice',
+    status: 'Approved',
+    adminNotes: 'Conference travel pre-approved by sales head.',
+    isTravelTrip: true,
+    travelDetails: {
+      clientName: 'SalesForce India Partners',
+      purpose: 'Annual Sales Partner Conference & Product Roadmap Session',
+      fromLocation: 'Mumbai (CSMT)',
+      toLocation: 'Hyderabad (HYB)',
+      estimatedAmount: 9000,
+      actualAmount: 8200,
+      approvalStep: '4_Actual_Submitted'
+    },
+    aiAudit: {
+      riskLevel: 'LOW', riskScore: 7, confidenceScore: 97,
+      flaggedIssues: ['Conference ticket matches calendar invite'],
+      policyNotes: 'Passed Audit: Train fare within economy travel limits. Under approved estimate.'
+    }
+  },
+  {
+    id: 'exp-112',
+    employeeName: 'Sneha Joshi',
+    employeeEmail: 'sneha.joshi@company.com',
+    expenseType: 'Miscellaneous',
+    date: getDateDaysAgo(7),
+    amount: 2400,
+    description: 'Marketing collateral printing for product launch event at BKC expo centre',
+    paymentMode: 'Cash',
+    receiptName: 'printzone_invoice_44.png',
+    receiptUrl: 'placeholder_electronics',
+    status: 'Reimbursed',
+    adminNotes: 'Marketing event expense approved and reimbursed.',
+    isTravelTrip: false,
+    aiAudit: {
+      riskLevel: 'LOW', riskScore: 12, confidenceScore: 93,
+      flaggedIssues: ['Marketing event expenditure verified'],
+      policyNotes: 'Passed Audit: Print material for official product launch. Within miscellaneous cap.'
+    }
+  },
+  {
+    id: 'exp-113',
+    employeeName: 'Arjun Rao',
+    employeeEmail: 'arjun.rao@company.com',
+    expenseType: 'Hotel',
+    date: getDateDaysAgo(9),
+    amount: 5500,
+    description: '1 night stay in Bangalore for finance team offsite and budget planning workshop',
+    paymentMode: 'Card',
+    receiptName: 'ibis_hotel_blr_inv.pdf',
+    receiptUrl: 'placeholder_hotel',
+    status: 'Approved',
+    adminNotes: 'Finance offsite approved under Q2 team budget.',
+    isTravelTrip: true,
+    travelDetails: {
+      clientName: 'Internal Finance Offsite',
+      purpose: 'Q2 Budget Planning & Annual Finance Review Workshop',
+      fromLocation: 'Mumbai (BOM)',
+      toLocation: 'Bengaluru (BLR)',
+      estimatedAmount: 6000,
+      actualAmount: 5500,
+      approvalStep: '4_Actual_Submitted'
+    },
+    aiAudit: {
+      riskLevel: 'LOW', riskScore: 10, confidenceScore: 94,
+      flaggedIssues: ['Internal offsite booking verified'],
+      policyNotes: 'Passed Audit: Hotel stay within tier-B city lodging cap of ₹6,000/night.'
+    }
+  },
+  {
+    id: 'exp-114',
+    employeeName: 'Divya Menon',
+    employeeEmail: 'divya.menon@company.com',
+    expenseType: 'Food',
+    date: getDateDaysAgo(11),
+    amount: 1100,
+    description: 'Client onboarding lunch at operations center with new enterprise account team',
+    paymentMode: 'UPI',
+    receiptName: 'mainland_china_receipt.png',
+    receiptUrl: 'placeholder_bill',
+    status: 'Pending',
+    isTravelTrip: false,
+    aiAudit: {
+      riskLevel: 'LOW', riskScore: 6, confidenceScore: 96,
+      flaggedIssues: ['Client onboarding activity verified'],
+      policyNotes: 'Passed Audit: Client-facing meal within per-head daily limit.'
+    }
+  },
+  {
+    id: 'exp-115',
+    employeeName: 'Nikhil Verma',
+    employeeEmail: 'nikhil.verma@company.com',
+    expenseType: 'Miscellaneous',
+    date: getDateDaysAgo(14),
+    amount: 3200,
+    description: 'Software license renewal for Figma team plan for product design squad',
+    paymentMode: 'Card',
+    receiptName: 'figma_invoice_2026.pdf',
+    receiptUrl: 'placeholder_electronics',
+    status: 'Approved',
+    adminNotes: 'Tool subscription approved under product team budget.',
+    isTravelTrip: false,
+    aiAudit: {
+      riskLevel: 'LOW', riskScore: 9, confidenceScore: 95,
+      flaggedIssues: ['Software license for team use verified'],
+      policyNotes: 'Passed Audit: SaaS tool renewal within miscellaneous cap. Business use confirmed.'
+    }
   }
 ];
 
 // Backend in-memory fallback
 let serverExpensesFallback = [...SAMPLE_EXPENSES_SEED];
+let serverEmployeesFallback = [...SAMPLE_EMPLOYEES_SEED];
 
 // MongoDB & Mongoose Schemas
 let isMongoDbConnected = false;
@@ -261,6 +435,16 @@ const ExpenseSchema = new Schema({
 
 const RecordModel = mongoose.model("Expense", ExpenseSchema);
 
+// ── NEW: Employee Schema & Model ─────────────────────────────────────────────
+const EmployeeSchema = new Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  role: { type: String, required: true },
+  department: { type: String, required: true },
+}, { timestamps: true });
+
+const EmployeeModel = mongoose.model("Employee", EmployeeSchema);
+
 // MongoDB Connection
 async function connectToMongo() {
   const uri = process.env.MONGODB_URI;
@@ -281,14 +465,24 @@ async function connectToMongo() {
     const collections = await mongoose.connection.db.listCollections().toArray();
     console.log("📦 Collections:", collections.map(c => c.name).join(", "));
 
+    // Seed expenses if empty
     const count = await RecordModel.countDocuments();
     console.log(`📊 Documents in 'expenses': ${count}`);
-
     if (count === 0) {
-      console.log("🌱 Seeding database...");
+      console.log("🌱 Seeding expenses...");
       await RecordModel.insertMany(SAMPLE_EXPENSES_SEED);
-      console.log("✅ Database seeded!");
+      console.log("✅ Expenses seeded!");
     }
+
+    // ── NEW: Seed employees if empty ─────────────────────────────────────────
+    const empCount = await EmployeeModel.countDocuments();
+    console.log(`📊 Documents in 'employees': ${empCount}`);
+    if (empCount === 0) {
+      console.log("🌱 Seeding employees...");
+      await EmployeeModel.insertMany(SAMPLE_EMPLOYEES_SEED);
+      console.log("✅ Employees seeded!");
+    }
+
   } catch (error) {
     console.error("❌ MongoDB connection failed:", error.message);
     isMongoDbConnected = false;
@@ -309,6 +503,19 @@ app.get("/api/db-status", (req, res) => {
     error: mongoDbErrorMessage,
     uriSupplied: !!process.env.MONGODB_URI
   });
+});
+
+// ── NEW: Employees route ──────────────────────────────────────────────────────
+app.get("/api/employees", async (req, res) => {
+  try {
+    if (isMongoDbConnected) {
+      const employees = await EmployeeModel.find();
+      return res.json(employees);
+    }
+    return res.json(serverEmployeesFallback);
+  } catch (err) {
+    return res.status(500).json({ error: "Failed to fetch employees.", message: err.message });
+  }
 });
 
 app.get("/api/expenses", async (req, res) => {
@@ -447,9 +654,12 @@ app.post("/api/reset-db", async (req, res) => {
     if (isMongoDbConnected) {
       await RecordModel.deleteMany({});
       await RecordModel.insertMany(SAMPLE_EXPENSES_SEED);
+      await EmployeeModel.deleteMany({});
+      await EmployeeModel.insertMany(SAMPLE_EMPLOYEES_SEED);
       return res.json({ success: true, message: "MongoDB reset successfully." });
     }
     serverExpensesFallback = [...SAMPLE_EXPENSES_SEED];
+    serverEmployeesFallback = [...SAMPLE_EMPLOYEES_SEED];
     return res.json({ success: true, message: "Memory store reset." });
   } catch (err) {
     return res.status(500).json({ error: "Reset failed.", message: err.message });
@@ -457,7 +667,7 @@ app.post("/api/reset-db", async (req, res) => {
 });
 
 // ----------------------------------------------------
-// Frontend serving (development only — not used on Vercel)
+// Frontend serving
 // ----------------------------------------------------
 
 if (process.env.NODE_ENV !== "production") {
@@ -475,7 +685,6 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
-// Start server (local dev only — Vercel uses export default)
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`📡 Server live on http://localhost:${PORT}`);
