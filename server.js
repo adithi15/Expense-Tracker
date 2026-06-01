@@ -7,23 +7,19 @@ import path from "path";
 import dotenv from "dotenv";
 import mongoose, { Schema } from "mongoose";
 
-// Load environment variables
 dotenv.config({ path: '.env.local' });
 
 const app = express();
 const PORT = 3000;
 
-// Body parser
 app.use(express.json({ limit: "25mb" }));
 
-// Helper to get dates relative to today
 const getDateDaysAgo = (days) => {
   const date = new Date();
   date.setDate(date.getDate() - days);
   return date.toISOString().split('T')[0];
 };
 
-// ── NEW: Employee seed data ──────────────────────────────────────────────────
 const SAMPLE_EMPLOYEES_SEED = [
   { name: "Adithi Ankam",   email: "adithi.ankam@company.com",  role: "Admin",     department: "Sales & BD" },
   { name: "Vemula Ravi",    email: "vemula@company.com",         role: "Employee",  department: "Product Engineering" },
@@ -229,7 +225,6 @@ const SAMPLE_EXPENSES_SEED = [
       policyNotes: 'Policy alert: Team farewell gatherings, celebrations, or recreational events are classified as social costs. Do not file under travel or personal dining claims.'
     }
   },
-  // ── NEW EXPENSES for new employees ────────────────────────────────────────
   {
     id: 'exp-109',
     employeeName: 'Rohit Desai',
@@ -388,69 +383,69 @@ const SAMPLE_EXPENSES_SEED = [
   }
 ];
 
-// Backend in-memory fallback
+// In-memory fallback stores
 let serverExpensesFallback = [...SAMPLE_EXPENSES_SEED];
 let serverEmployeesFallback = [...SAMPLE_EMPLOYEES_SEED];
 
-// MongoDB & Mongoose Schemas
+// ── Mongoose Schemas ──────────────────────────────────────────────────────────
+
 let isMongoDbConnected = false;
 let mongoDbErrorMessage = "";
 
 const TravelDetailsSchema = new Schema({
-  clientName: { type: String, required: true },
-  purpose: { type: String, required: true },
-  fromLocation: { type: String, required: true },
-  toLocation: { type: String, required: true },
+  clientName:      { type: String, required: true },
+  purpose:         { type: String, required: true },
+  fromLocation:    { type: String, required: true },
+  toLocation:      { type: String, required: true },
   estimatedAmount: { type: Number, required: true },
-  actualAmount: { type: Number, required: true },
-  approvalStep: { type: String, required: true }
+  actualAmount:    { type: Number, required: true },
+  approvalStep:    { type: String, required: true }
 }, { _id: false });
 
 const AiAuditSchema = new Schema({
-  riskLevel: { type: String, default: "LOW" },
-  riskScore: { type: Number, default: 0 },
+  riskLevel:       { type: String, default: "LOW" },
+  riskScore:       { type: Number, default: 0 },
   confidenceScore: { type: Number, default: 100 },
-  flaggedIssues: [{ type: String }],
-  policyNotes: { type: String }
+  flaggedIssues:   [{ type: String }],
+  policyNotes:     { type: String }
 }, { _id: false });
 
 const ExpenseSchema = new Schema({
-  id: { type: String, required: true, unique: true },
-  employeeName: { type: String, required: true },
+  id:            { type: String, required: true, unique: true },
+  employeeName:  { type: String, required: true },
   employeeEmail: { type: String, required: true },
-  expenseType: { type: String, required: true },
-  date: { type: String, required: true },
-  amount: { type: Number, required: true },
-  description: { type: String, required: true },
-  paymentMode: { type: String, required: true },
-  receiptName: { type: String },
-  receiptUrl: { type: String },
-  status: { type: String, required: true },
-  adminNotes: { type: String },
-  updatedAt: { type: String },
-  isTravelTrip: { type: Boolean, required: true, default: false },
+  expenseType:   { type: String, required: true },
+  date:          { type: String, required: true },
+  amount:        { type: Number, required: true },
+  description:   { type: String, required: true },
+  paymentMode:   { type: String, required: true },
+  receiptName:   { type: String },
+  receiptUrl:    { type: String },
+  status:        { type: String, required: true },
+  adminNotes:    { type: String },
+  updatedAt:     { type: String },
+  isTravelTrip:  { type: Boolean, required: true, default: false },
   travelDetails: { type: TravelDetailsSchema },
-  aiAudit: { type: AiAuditSchema }
+  aiAudit:       { type: AiAuditSchema }
 }, { timestamps: true });
 
 const RecordModel = mongoose.model("Expense", ExpenseSchema);
 
-// ── NEW: Employee Schema & Model ─────────────────────────────────────────────
 const EmployeeSchema = new Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  role: { type: String, required: true },
+  name:       { type: String, required: true },
+  email:      { type: String, required: true, unique: true },
+  role:       { type: String, required: true },
   department: { type: String, required: true },
 }, { timestamps: true });
 
 const EmployeeModel = mongoose.model("Employee", EmployeeSchema);
 
-// MongoDB Connection
+// ── MongoDB Connection ────────────────────────────────────────────────────────
+
 async function connectToMongo() {
   const uri = process.env.MONGODB_URI;
   if (!uri) {
     console.warn("⚠️ MONGODB_URI not found. Running in memory fallback mode.");
-    isMongoDbConnected = false;
     mongoDbErrorMessage = "MONGODB_URI missing. Running in fallback mode.";
     return;
   }
@@ -458,43 +453,29 @@ async function connectToMongo() {
   try {
     mongoose.set("strictQuery", false);
     await mongoose.connect(uri, { serverSelectionTimeoutMS: 5000 });
-    console.log("🚀 MongoDB connected successfully!");
+    console.log("🚀 MongoDB connected Successfully");
     isMongoDbConnected = true;
-    mongoDbErrorMessage = "";
-
-    const collections = await mongoose.connection.db.listCollections().toArray();
-    console.log("📦 Collections:", collections.map(c => c.name).join(", "));
 
     // Seed expenses if empty
-    const count = await RecordModel.countDocuments();
-    console.log(`📊 Documents in 'expenses': ${count}`);
-    if (count === 0) {
-      console.log("🌱 Seeding expenses...");
+    if (await RecordModel.countDocuments() === 0) {
       await RecordModel.insertMany(SAMPLE_EXPENSES_SEED);
-      console.log("✅ Expenses seeded!");
+      console.log("✅ Expenses seeded");
     }
 
-    // ── NEW: Seed employees if empty ─────────────────────────────────────────
-    const empCount = await EmployeeModel.countDocuments();
-    console.log(`📊 Documents in 'employees': ${empCount}`);
-    if (empCount === 0) {
-      console.log("🌱 Seeding employees...");
+    // Seed employees if empty
+    if (await EmployeeModel.countDocuments() === 0) {
       await EmployeeModel.insertMany(SAMPLE_EMPLOYEES_SEED);
-      console.log("✅ Employees seeded!");
+      console.log("✅ Employees seeded");
     }
-
   } catch (error) {
     console.error("❌ MongoDB connection failed:", error.message);
-    isMongoDbConnected = false;
     mongoDbErrorMessage = error.message || "Connection failed.";
   }
 }
 
 connectToMongo();
 
-// ----------------------------------------------------
-// API Routes
-// ----------------------------------------------------
+// ── API Routes ────────────────────────────────────────────────────────────────
 
 app.get("/api/db-status", (req, res) => {
   res.json({
@@ -505,14 +486,12 @@ app.get("/api/db-status", (req, res) => {
   });
 });
 
-// ── NEW: Employees route ──────────────────────────────────────────────────────
 app.get("/api/employees", async (req, res) => {
   try {
-    if (isMongoDbConnected) {
-      const employees = await EmployeeModel.find();
-      return res.json(employees);
-    }
-    return res.json(serverEmployeesFallback);
+    const employees = isMongoDbConnected
+      ? await EmployeeModel.find()
+      : serverEmployeesFallback;
+    return res.json(employees);
   } catch (err) {
     return res.status(500).json({ error: "Failed to fetch employees.", message: err.message });
   }
@@ -520,11 +499,10 @@ app.get("/api/employees", async (req, res) => {
 
 app.get("/api/expenses", async (req, res) => {
   try {
-    if (isMongoDbConnected) {
-      const dbEntries = await RecordModel.find().sort({ createdAt: -1 });
-      return res.json(dbEntries);
-    }
-    return res.json(serverExpensesFallback);
+    const expenses = isMongoDbConnected
+      ? await RecordModel.find().sort({ createdAt: -1 })
+      : serverExpensesFallback;
+    return res.json(expenses);
   } catch (err) {
     return res.status(500).json({ error: "Failed to read expenses.", message: err.message });
   }
@@ -548,21 +526,25 @@ app.post("/api/expenses", async (req, res) => {
 app.post("/api/ai/audit", async (req, res) => {
   try {
     const { expenseType, amount, description, travelDetails } = req.body;
-    const descLower = (description || "").toLowerCase();
-    const typeLower = (expenseType || "").toLowerCase();
+    const descLower  = (description || "").toLowerCase();
+    const typeLower  = (expenseType || "").toLowerCase();
     const parsedAmount = Number(amount) || 0;
 
-    let riskLevel = "LOW";
-    let riskScore = 10;
+    let riskLevel       = "LOW";
+    let riskScore       = 10;
     let confidenceScore = 100;
-    let flaggedIssues = [];
-    let policyNotes = "Claim conforms to general corporate reimbursement standards.";
+    let flaggedIssues   = [];
+    let policyNotes     = "Claim conforms to general corporate reimbursement standards.";
 
-    if (descLower.includes("personal") || descLower.includes("vacation") || descLower.includes("family") || descLower.includes("gift") || descLower.includes("spouse") || descLower.includes("holiday") || descLower.includes("movies") || descLower.includes("leisure")) {
+    if (descLower.includes("personal") || descLower.includes("vacation") || descLower.includes("family") ||
+        descLower.includes("gift") || descLower.includes("spouse") || descLower.includes("holiday") ||
+        descLower.includes("movies") || descLower.includes("leisure")) {
       riskLevel = "HIGH"; riskScore = 95;
       flaggedIssues.push("Non-business vacation/personal keyword detected");
       policyNotes = "Policy Violation: Personal charges are ineligible for corporate reimbursement.";
-    } else if (descLower.includes("beer") || descLower.includes("alcohol") || descLower.includes("pub") || descLower.includes("party") || descLower.includes("liquor") || descLower.includes("wine") || descLower.includes("bar ")) {
+    } else if (descLower.includes("beer") || descLower.includes("alcohol") || descLower.includes("pub") ||
+               descLower.includes("party") || descLower.includes("liquor") || descLower.includes("wine") ||
+               descLower.includes("bar ")) {
       riskLevel = "MEDIUM"; riskScore = 60;
       flaggedIssues.push("Alcohol/bar charge detected — requires VP approval");
       policyNotes = "Policy Alert: Alcohol expenses require division head override.";
@@ -594,7 +576,8 @@ app.post("/api/ai/audit", async (req, res) => {
     }
 
     if (flaggedIssues.length === 0) {
-      if (descLower.includes("meeting") || descLower.includes("client") || descLower.includes("workshop") || descLower.includes("kickoff")) {
+      if (descLower.includes("meeting") || descLower.includes("client") ||
+          descLower.includes("workshop") || descLower.includes("kickoff")) {
         riskScore = 5;
         flaggedIssues.push("Verified client engagement activity");
         policyNotes = "Passed Audit: Client-facing activity eligible for reimbursement.";
@@ -666,9 +649,7 @@ app.post("/api/reset-db", async (req, res) => {
   }
 });
 
-// ----------------------------------------------------
-// Frontend serving
-// ----------------------------------------------------
+// ── Frontend Serving ──────────────────────────────────────────────────────────
 
 if (process.env.NODE_ENV !== "production") {
   const { createServer: createViteServer } = await import("vite");
@@ -687,7 +668,7 @@ if (process.env.NODE_ENV !== "production") {
 
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`📡 Server live on http://localhost:${PORT}`);
+    console.log(` http://localhost:${PORT}`);
   });
 }
 
