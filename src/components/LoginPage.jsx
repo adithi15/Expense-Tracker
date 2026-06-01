@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Layers, Eye, EyeOff, AlertCircle, User, ShieldCheck } from "lucide-react";
+import {
+  Layers,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  User,
+  ShieldCheck,
+} from "lucide-react";
 import { SAMPLE_EMPLOYEES } from "../data/sampleData.js";
 
 export default function LoginPage({ onLogin }) {
@@ -29,14 +36,14 @@ export default function LoginPage({ onLogin }) {
     const user = SAMPLE_EMPLOYEES.find(
       (emp) =>
         emp.email.toLowerCase() === email.trim().toLowerCase() &&
-        emp.role === activeRole
+        emp.role === activeRole,
     );
 
     if (!user) {
       setError(
         activeRole === "Admin"
           ? "No Admin account found with that email."
-          : "No Employee account found with that email."
+          : "No Employee account found with that email.",
       );
       return;
     }
@@ -54,7 +61,6 @@ export default function LoginPage({ onLogin }) {
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center size-12 bg-indigo-600 rounded-2xl mb-4">
@@ -69,7 +75,6 @@ export default function LoginPage({ onLogin }) {
         </div>
 
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
-
           {/* Role Tab Switcher */}
           <div className="flex gap-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl mb-5">
             <button
@@ -99,7 +104,6 @@ export default function LoginPage({ onLogin }) {
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
-
             {/* Email */}
             <div className="space-y-1.5">
               <label className="block text-sm font-medium text-slate-600 dark:text-slate-400">
@@ -132,7 +136,11 @@ export default function LoginPage({ onLogin }) {
                   onClick={() => setShowPassword((p) => !p)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition"
                 >
-                  {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  {showPassword ? (
+                    <EyeOff className="size-5" />
+                  ) : (
+                    <Eye className="size-5" />
+                  )}
                 </button>
               </div>
             </div>
@@ -152,13 +160,6 @@ export default function LoginPage({ onLogin }) {
             >
               Sign in
             </button>
-
-            <p className="text-center text-[11px] text-slate-400 pt-1">
-              Demo: use any {activeRole.toLowerCase()} email + password{" "}
-              <span className="font-mono bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">
-                demo123
-              </span>
-            </p>
           </form>
         </div>
       </div>

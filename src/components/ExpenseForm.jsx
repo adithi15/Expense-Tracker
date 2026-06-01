@@ -371,7 +371,7 @@ export default function ExpenseForm({ currentUser, onAddExpense, onClose }) {
                   : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-300"
               }`}
             >
-              💵 Client petty cash / Day claims
+              💵  Day claims
             </button>
             <button
               type="button"
@@ -383,7 +383,7 @@ export default function ExpenseForm({ currentUser, onAddExpense, onClose }) {
                   : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-300"
               }`}
             >
-              ✈️ Dynamic Pre-Approved Travel Event
+              ✈️  Pre-Approved Travel Event
             </button>
           </div>
 
