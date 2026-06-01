@@ -279,6 +279,8 @@ const ExpenseSchema = new Schema({
 const RecordModel = mongoose.model("Expense", ExpenseSchema);
 
 // Connection Handler
+
+
 async function connectToMongo() {
   const uri = process.env.MONGODB_URI;
   if (!uri) {
@@ -297,19 +299,64 @@ async function connectToMongo() {
     isMongoDbConnected = true;
     mongoDbErrorMessage = "";
 
-    // Self-seeding check if the collection is pristine
+    // Print collections and document count
+    const collections = await mongoose.connection.db.listCollections().toArray();
+    console.log("📦 Collections in your database:");
+    collections.forEach(col => console.log("   →", col.name));
     const count = await RecordModel.countDocuments();
+    console.log(`📊 Total documents in 'expenses' collection: ${count}`);
+
+    // Self-seeding check if the collection is pristine
     if (count === 0) {
       console.log("🌱 Database is empty. Seeding MongoDB with initial company sample payload...");
       await RecordModel.insertMany(SAMPLE_EXPENSES_SEED);
       console.log("✅ Database initialized successfully!");
     }
+
   } catch (error) {
     console.error("❌ Failed to bind to MongoDB instance cluster:", error.message);
     isMongoDbConnected = false;
     mongoDbErrorMessage = error.message || "Connection timeout or invalid credentials.";
   }
 }
+// async function connectToMongo() {
+//   const uri = process.env.MONGODB_URI;
+//   if (!uri) {
+//     console.warn("⚠️ MONGODB_URI is not declared in environment. Active fallback is server memory.");
+//     isMongoDbConnected = false;
+//     mongoDbErrorMessage = "MONGODB_URI variable missing in settings. Running in transient fallback mode.";
+//     return;
+//   }
+
+//   try {
+//     mongoose.set("strictQuery", false);
+//     await mongoose.connect(uri, {
+//       serverSelectionTimeoutMS: 5000,
+//     });
+//     console.log("🚀 Successful connection established to MongoDB database!");
+//     isMongoDbConnected = true;
+//     mongoDbErrorMessage = "";
+//     const collections = await mongoose.connection.db.listCollections().toArray();
+// console.log("📦 Collections in your database:");
+// collections.forEach(col => console.log("   →", col.name));
+
+// const count = await RecordModel.countDocuments();
+// console.log(`📊 Total documents in 'expenses' collection: ${count}`);
+  
+
+    // Self-seeding check if the collection is pristine
+//     const count = await RecordModel.countDocuments();
+//     if (count === 0) {
+//       console.log("🌱 Database is empty. Seeding MongoDB with initial company sample payload...");
+//       await RecordModel.insertMany(SAMPLE_EXPENSES_SEED);
+//       console.log("✅ Database initialized successfully!");
+//     }
+//   } catch (error) {
+//     console.error("❌ Failed to bind to MongoDB instance cluster:", error.message);
+//     isMongoDbConnected = false;
+//     mongoDbErrorMessage = error.message || "Connection timeout or invalid credentials.";
+//   }
+//  }
 
 // Fire off database boot
 connectToMongo();
