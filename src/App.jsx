@@ -380,7 +380,6 @@ export default function App() {
         ) : activeTab === "Dashboard" ? (
           <Dashboard
             expenses={expenses}
-            currentUser={currentUser}
             onViewExpense={(exp) => setSelectedExpense(exp)}
           />
         ) : (
