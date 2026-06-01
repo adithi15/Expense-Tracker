@@ -224,6 +224,12 @@ export default function App() {
     return <LoginPage onLogin={handleLogin} />;
   }
 
+  // Filter expenses: employees only see their own; admins see all
+  const visibleExpenses =
+    currentUser.role === "Admin"
+      ? expenses
+      : expenses.filter((e) => e.employeeEmail === currentUser.email);
+
   return (
     <div className="bg-slate-50 min-h-screen font-sans flex flex-col">
       {/* Top Navbar */}
@@ -379,12 +385,12 @@ export default function App() {
           </div>
         ) : activeTab === "Dashboard" ? (
           <Dashboard
-            expenses={expenses}
+            expenses={visibleExpenses}
             onViewExpense={(exp) => setSelectedExpense(exp)}
           />
         ) : (
           <ExpenseTable
-            expenses={expenses}
+            expenses={visibleExpenses}
             currentUser={currentUser}
             onViewExpense={(exp) => setSelectedExpense(exp)}
             onDeleteExpense={handleDeleteExpense}

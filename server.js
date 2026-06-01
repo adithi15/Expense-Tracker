@@ -1,6 +1,3 @@
-/**
- * SPDX-License-Identifier: Apache-2.0
- */
 
 import express from "express";
 import path from "path";
@@ -453,7 +450,7 @@ async function connectToMongo() {
   try {
     mongoose.set("strictQuery", false);
     await mongoose.connect(uri, { serverSelectionTimeoutMS: 5000 });
-    console.log("🚀 MongoDB connected");
+    console.log("🚀 MongoDB connected Successfully");
     isMongoDbConnected = true;
 
     // Seed expenses if empty
@@ -649,7 +646,7 @@ app.post("/api/reset-db", async (req, res) => {
   }
 });
 
-// ── Frontend Serving ──────────────────────────────────────────────────────────
+
 
 if (process.env.NODE_ENV !== "production") {
   const { createServer: createViteServer } = await import("vite");
@@ -668,7 +665,7 @@ if (process.env.NODE_ENV !== "production") {
 
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`📡 Server live on http://localhost:${PORT}`);
+    console.log(`http://localhost:${PORT}`);
   });
 }
 

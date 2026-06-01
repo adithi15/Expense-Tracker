@@ -395,5 +395,3 @@ export default function Dashboard({ expenses, onViewExpense }) {
     </div>
   );
 }
-
-
