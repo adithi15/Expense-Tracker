@@ -453,7 +453,7 @@ async function connectToMongo() {
   try {
     mongoose.set("strictQuery", false);
     await mongoose.connect(uri, { serverSelectionTimeoutMS: 5000 });
-    console.log("🚀 MongoDB connected Successfully");
+    console.log("🚀 MongoDB connected");
     isMongoDbConnected = true;
 
     // Seed expenses if empty
@@ -668,7 +668,7 @@ if (process.env.NODE_ENV !== "production") {
 
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(` http://localhost:${PORT}`);
+    console.log(`📡 Server live on http://localhost:${PORT}`);
   });
 }
 
